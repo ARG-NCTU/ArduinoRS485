@@ -17,7 +17,8 @@ http://www.arduino.cc/en/Reference/{repository-name}
 # Hardware Preparations
 
 Hardwre needed:
-* Arduino 
+
+* Arduino XX
 * MKR RS485 Shield
 * Embedded Computer or PC
 
