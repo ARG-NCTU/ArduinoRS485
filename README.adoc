@@ -13,3 +13,16 @@ This library supports the Maxim Integrated MAX3157 and equivalent chipsets.
 
 For more information about this library please visit us at
 http://www.arduino.cc/en/Reference/{repository-name}
+
+# Hardware Preparations
+
+Hardwre needed:
+* Arduino 
+* MKR RS485 Shield
+* Embedded Computer or PC
+
+# Use Case 1: Two Sets of Arduino + MKR RS485 Shield Testing
+
+The testing is to verify that the testing hardwares are ready.
+Two sets of hardware will send and receive from each other.
+
