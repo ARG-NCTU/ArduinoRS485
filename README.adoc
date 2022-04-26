@@ -16,14 +16,30 @@ http://www.arduino.cc/en/Reference/{repository-name}
 
 # Hardware Preparations
 
-Hardwre needed:
+Hardwre needed: We will prepare two sets of each solution.
+
+## USB Solution 
+
+* USB Cable
+* RS485 (XXX add model)
+* ...
+
+We will plug in two USBs to a laptop computer.
+TODO Add photo.
+
+## Arduino Solution
 
 * Arduino XX
 * MKR RS485 Shield
 * Embedded Computer or PC
 
-# Use Case 1: Two Sets of Arduino + MKR RS485 Shield Testing
+# Use Case 1: Send and Receive
 
-The testing is to verify that the testing hardwares are ready.
+The use case aims at verifying that the RS485 hardware is functional.
 Two sets of hardware will send and receive from each other.
 
+TODO: add Dockerfile for laptop, pytest 
+
+## Use Case 1.1: Two Sets of USB + RS485
+
+## Use Case 1.2: Two Sets of Arduino + MKR RS485 Shield Testing
