@@ -3,13 +3,15 @@
 import serial
 import crc8
 import time
-
+import serial.rs485
 
 class Serial_receive(object):
 
     def __init__(self):
-        self.ser = serial.Serial(port='/dev/ttyUSB1',baudrate = 19200,parity=serial.PARITY_NONE,\
+        self.ser = serial.rs485.RS485(port='/dev/ttyUSB0',baudrate = 19200,parity=serial.PARITY_NONE,\
         stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS, timeout=0)
+
+        self.ser.rs485_mode = serial.rs485.RS485Settings()
 
         print("connected to :"+self.ser.portstr)
 

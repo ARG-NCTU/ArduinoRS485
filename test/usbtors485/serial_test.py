@@ -3,6 +3,7 @@
 import serial
 import crc8
 import time
+import serial.rs485
 
 
 class Serial(object):
