@@ -41,7 +41,7 @@ class Serial_receive(object):
         while True:
             #print("packet start")
             for line in self.ser.readline():
-                print(self.hexshow(line))
+                print(hex(line))
                 #print("packet end")
                 #print(type(self.hexshow(line)))
 
