@@ -102,12 +102,10 @@ class Serial(object):
         packet5 = bytearray()
         packet5.append(0xAC)
         packet5.append(0x00)
+        packet5.append(0x01)
+        packet5.append(0xB0)
         packet5.append(0x00)
-        packet5.append(0x05)
-        packet5.append(0x00)
-        packet5.append(0xFF)
-        packet5.append(0x0F)
-        packet5.append(0x41)
+        packet5.append(0xC9)
         packet5.append(0xAD)
         packet5.append(0xFF)
 
@@ -116,12 +114,10 @@ class Serial(object):
         packet6 = bytearray()
         packet6.append(0xAC)
         packet6.append(0x00)
+        packet6.append(0x01)
         packet6.append(0x00)
-        packet6.append(0x05)
-        packet6.append(0x00)
-        packet6.append(0x00)
-        packet6.append(0x00)
-        packet6.append(0x87)
+        packet6.append(0x0D)
+        packet6.append(0xBE)
         packet6.append(0xAD)
         packet6.append(0xFF)
 
@@ -135,8 +131,8 @@ class Serial(object):
 
                 if(hex(line) == packet4):
                     time.sleep(0.003)
-                    if(self.count < 10):
-            #             self.ser.write(packet6)
+                    if(self.count < 2):
+                        self.ser.write(packet6)
                         self.count = self.count + 1
                     else: 
                         time.sleep(50)
