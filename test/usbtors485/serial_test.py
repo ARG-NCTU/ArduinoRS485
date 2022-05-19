@@ -99,44 +99,49 @@ class Serial(object):
         packet4 = "0xad"
 
         packet5 = bytearray()
-        packet4.append(0xAC)
-        packet4.append(0x00)
-        packet4.append(0x00)
-        packet4.append(0x05)
-        packet4.append(0x00)
-        packet4.append(0xFE)
-        packet4.append(0xA9)
-        packet4.append(0xF7)
-        packet4.append(0xAD)
-        packet4.append(0xFF)
+        packet5.append(0xAC)
+        packet5.append(0x00)
+        packet5.append(0x00)
+        packet5.append(0x05)
+        packet5.append(0x00)
+        packet5.append(0xFE)
+        packet5.append(0xA9)
+        packet5.append(0xF7)
+        packet5.append(0xAD)
+        packet5.append(0xFF)
 
 
         
         while True:
             #ser.write(b'\xAC\x30\x00\x2D\xAD')
-            for line in self.ser.readline():
-                if(hex(line) == packet3):
-                    time0 = time.time()
+            # for line in self.ser.readline():
+            #     if(hex(line) == packet3):
+            #         time0 = time.time()
 
-                if(hex(line) == packet4):
-                    self.ser.write(packet5)
-                    if ((time.time() - time0) > 0.02) :
-                        print("one slop")
+            #     if(hex(line) == packet4):
+            #         self.ser.write(packet5)
+            #         if ((time.time() - time0) > 0.02) :
+            #             print("one slop")
 
 
 
 
             #time.sleep(5)
-            # self.ser.write(packet)
-            # for line in self.ser.readline():
-            #     print(hex(line))
-            #     #if(hex(line) == "0xac"):
-            #         #print("getgetget")
-            # time.sleep(0.025)
-            # self.ser.write(packet1)
-            # time.sleep(0.025)
-            # self.ser.write(packet2)
-            # time.sleep(0.025)
+            self.ser.write(packet)
+            print("start")
+            for line in self.ser.readline():
+                print(hex(line))
+                #if(hex(line) == "0xac"):
+                    #print("getgetget")
+            time.sleep(0.025)
+            self.ser.write(packet1)
+            for line in self.ser.readline():
+                print(hex(line))
+            time.sleep(0.025)
+            self.ser.write(packet2)
+            for line in self.ser.readline():
+                print(hex(line))
+            time.sleep(0.025)
 
     # print("send")
     # for line in ser.readline():

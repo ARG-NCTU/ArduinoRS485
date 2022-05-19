@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import serial
-import crc8
+#import crc8
 import time
 import serial.rs485
 
@@ -25,7 +25,7 @@ class Serial_receive(object):
             hhex = '%02x' % hvo1
             result = hhex
 
-        print 'hexSHow:',result
+        print ('hexSHow:',result)
         return result
 
 
