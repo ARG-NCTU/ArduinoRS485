@@ -14,6 +14,7 @@ class Serial(object):
         stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS, timeout=0)
 
         self.ser.rs485_mode = serial.rs485.RS485Settings()
+        self.count = 1
 
     def hexshow(self,argv):
 
@@ -64,9 +65,10 @@ class Serial(object):
         packet2.append(0xAC)
         packet2.append(0x20)
         packet2.append(0x41)
-        packet2.append(0x03)
+        packet2.append(0x00)
         packet2.append(0x12)
-        packet2.append(0x03)
+        packet2.append(0x08)
+        packet2.append(0x32)
         packet2.append(0x00)
         packet2.append(0x00)
         packet2.append(0x00)
@@ -74,9 +76,8 @@ class Serial(object):
         packet2.append(0x00)
         packet2.append(0x00)
         packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x17)
+        packet2.append(0x01)
+        packet2.append(0x19)
         packet2.append(0xAA)
         packet2.append(0x5F)
         packet2.append(0x0C)
@@ -89,9 +90,9 @@ class Serial(object):
         packet2.append(0x00)
         packet2.append(0x00)
         packet2.append(0x00)
-        packet2.append(0x16)
-        packet2.append(0x16)
-        packet2.append(0x14)
+        packet2.append(0x19)
+        packet2.append(0x1A)
+        packet2.append(0x36)
         packet2.append(0xAD)
 
         packet3 = "0xac"
@@ -99,47 +100,69 @@ class Serial(object):
         packet4 = "0xad"
 
         packet5 = bytearray()
-        packet4.append(0xAC)
-        packet4.append(0x00)
-        packet4.append(0x00)
-        packet4.append(0x05)
-        packet4.append(0x00)
-        packet4.append(0xFE)
-        packet4.append(0xA9)
-        packet4.append(0xF7)
-        packet4.append(0xAD)
-        packet4.append(0xFF)
+        packet5.append(0xAC)
+        packet5.append(0x00)
+        packet5.append(0x00)
+        packet5.append(0x05)
+        packet5.append(0x00)
+        packet5.append(0xFF)
+        packet5.append(0x0F)
+        packet5.append(0x41)
+        packet5.append(0xAD)
+        packet5.append(0xFF)
 
+
+
+        packet6 = bytearray()
+        packet6.append(0xAC)
+        packet6.append(0x00)
+        packet6.append(0x00)
+        packet6.append(0x05)
+        packet6.append(0x00)
+        packet6.append(0x00)
+        packet6.append(0x00)
+        packet6.append(0x87)
+        packet6.append(0xAD)
+        packet6.append(0xFF)
 
         
         while True:
             #ser.write(b'\xAC\x30\x00\x2D\xAD')
             for line in self.ser.readline():
-                if(hex(line) == packet3):
-                    time0 = time.time()
+                print(hex(line))
+            #     # if(hex(line) == packet3):
+            #     #     time0 = time.time()
 
                 if(hex(line) == packet4):
-                    self.ser.write(packet5)
-                    if ((time.time() - time0) > 0.02) :
-                        print("one slop")
+                    time.sleep(0.003)
+                    if(self.count < 10):
+            #             self.ser.write(packet6)
+                        self.count = self.count + 1
+                    else: 
+                        time.sleep(50)
+            #             self.ser.write(packet5)
+            #             print("send cmd")
+            #         print(self.count)
+                    # if ((time.time() - time0) > 0.02) :
+                    #     print("one slop")
 
 
 
 
-            #time.sleep(5)
+    #         #time.sleep(5)
             # self.ser.write(packet)
             # for line in self.ser.readline():
             #     print(hex(line))
             #     #if(hex(line) == "0xac"):
             #         #print("getgetget")
-            # time.sleep(0.025)
+            # time.sleep(0.05)
             # self.ser.write(packet1)
-            # time.sleep(0.025)
+            # time.sleep(0.05)
             # self.ser.write(packet2)
-            # time.sleep(0.025)
+            # time.sleep(0.05)
 
-    # print("send")
-    # for line in ser.readline():
+    # # print("send")
+    # # for line in ser.readline():
     #    print(hexshow(line))
     #    print(type(hexshow(line)))
     # in_hex = ser.read()
