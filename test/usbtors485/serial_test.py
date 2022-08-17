@@ -5,6 +5,7 @@ import serial
 import time
 import serial.rs485
 import time
+from crccheck.crc import Crc8Maxim
 
 
 class Serial(object):
@@ -12,9 +13,10 @@ class Serial(object):
     def __init__(self):
         self.ser = serial.rs485.RS485(port='/dev/ttyUSB0',baudrate = 19200,parity=serial.PARITY_NONE,\
         stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS, timeout=0)
-
+        #self.ser.open()
         self.ser.rs485_mode = serial.rs485.RS485Settings()
-        self.count = 1
+        self.count = 0
+        self.once = 0
 
     def hexshow(self,argv):
 
@@ -36,76 +38,56 @@ class Serial(object):
 
 #print(hex(8))
 #print(hex(300))
+
+    def tohex(self,val, nbits):
+        hex_cmd = hex((val + (1 << nbits)) % (1 << nbits))
+        hex_string = ""
+        length = len(hex_cmd)
+        zero = 6-length
+        for i in range(zero):
+            hex_string = hex_string + "0"
+        data = hex_cmd[2:length]
+        hex_string = hex_string+data
+        data1 = bytearray.fromhex(hex_string)
+        return data1
+
+    def vel_to_hex_cmd(self,vel):
+        self.packet = bytearray()
+        self.packet.append(0xAC)
+        self.packet.append(0x00)
+        self.packet.append(0x00)
+        self.packet.append(0x05)
+        self.packet.append(0x00)
+        hex_cmd = self.tohex(vel,16)
+        self.packet.extend(hex_cmd)
+        crc = Crc8Maxim.calc(self.packet[1:])
+        self.packet.extend(crc.to_bytes(1,'big'))
+        self.packet.append(0xAD)
+        print(self.packet)
+        return self.packet
+
 #ser.open()
 # 
     def send(self):
-        packet = bytearray()
-        packet.append(0xAC)
-        packet.append(0x14)
-        packet.append(0x01)
-        packet.append(0x89)
-        packet.append(0xAD)
-        packet1 = bytearray()
-        packet1.append(0xAC)
-        packet1.append(0x20)
-        packet1.append(0x42)
-        packet1.append(0x01)
-        packet1.append(0x06)
-        packet1.append(0x10)
-        packet1.append(0x80)
-        packet1.append(0x00)
-        packet1.append(0x1C)
-        packet1.append(0x00)
-        packet1.append(0x01)
-        packet1.append(0x21)
-        packet1.append(0x80)
-        packet1.append(0x38)
-        packet1.append(0xAD)
-        packet2 = bytearray()
-        packet2.append(0xAC)
-        packet2.append(0x20)
-        packet2.append(0x41)
-        packet2.append(0x00)
-        packet2.append(0x12)
-        packet2.append(0x08)
-        packet2.append(0x32)
-        packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x01)
-        packet2.append(0x19)
-        packet2.append(0xAA)
-        packet2.append(0x5F)
-        packet2.append(0x0C)
-        packet2.append(0xC1)
-        packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x00)
-        packet2.append(0x19)
-        packet2.append(0x1A)
-        packet2.append(0x36)
-        packet2.append(0xAD)
 
-        packet3 = "0xac"
+        cmd_vel = self.vel_to_hex_cmd(300)
+        cmd_vel2 = self.vel_to_hex_cmd(-300)
 
-        packet4 = "0xad"
+
+
+        packet3 = "0xad"
+
+        packet4 = "0x89"
 
         packet5 = bytearray()
         packet5.append(0xAC)
         packet5.append(0x00)
-        packet5.append(0x01)
-        packet5.append(0xB0)
         packet5.append(0x00)
-        packet5.append(0xC9)
+        packet5.append(0x05)
+        packet5.append(0x00)
+        packet5.append(0x02)
+        packet5.append(0x2D)
+        packet5.append(0xCE)
         packet5.append(0xAD)
         packet5.append(0xFF)
 
@@ -114,28 +96,64 @@ class Serial(object):
         packet6 = bytearray()
         packet6.append(0xAC)
         packet6.append(0x00)
-        packet6.append(0x01)
         packet6.append(0x00)
-        packet6.append(0x0D)
-        packet6.append(0xBE)
+        packet6.append(0x05)
+        packet6.append(0x00)
+        packet6.append(0x00)
+        packet6.append(0x00)
+        packet6.append(0x81)
         packet6.append(0xAD)
         packet6.append(0xFF)
 
-        
+   
         while True:
+           
             #ser.write(b'\xAC\x30\x00\x2D\xAD')
             for line in self.ser.readline():
                 print(hex(line))
             #     # if(hex(line) == packet3):
             #     #     time0 = time.time()
-
+                
                 if(hex(line) == packet4):
-                    time.sleep(0.003)
-                    if(self.count < 2):
-                        self.ser.write(packet6)
-                        self.count = self.count + 1
-                    else: 
-                        time.sleep(50)
+                    self.count = 1
+
+                if(hex(line) == packet3):
+                    if (self.count == 1):
+                        #time.sleep(0.003)
+                        #print(self.once)
+                        if (self.once < 5):
+                            print("send reset")
+                            self.ser.write(packet6)
+                            self.count = 0
+                            self.once = self.once+1
+                        elif(self.once<10):
+                            print("send speed")
+                            self.ser.write(cmd_vel)
+                            self.once = self.once+1
+                            self.count = 0
+                        elif(self.once<15):
+                            print("send reset")
+                            self.ser.write(packet6)
+                            self.count = 0
+                            self.once = self.once+1
+                        elif(self.once<45):
+                            print("send negative speed")
+                            self.ser.write(cmd_vel2)
+                            self.once = self.once+1
+                            self.count = 0
+                        elif(self.once<75):
+                            print("send speed")
+                            self.ser.write(cmd_vel)
+                            self.once = self.once+1
+                            self.count = 0
+
+
+        print("close")
+        self.ser.close()
+
+
+
+
             #             self.ser.write(packet5)
             #             print("send cmd")
             #         print(self.count)
@@ -145,35 +163,6 @@ class Serial(object):
 
 
 
-    #         #time.sleep(5)
-            # self.ser.write(packet)
-            # for line in self.ser.readline():
-            #     print(hex(line))
-            #     #if(hex(line) == "0xac"):
-            #         #print("getgetget")
-            # time.sleep(0.05)
-            # self.ser.write(packet1)
-            # time.sleep(0.05)
-            # self.ser.write(packet2)
-            # time.sleep(0.05)
-
-    # # print("send")
-    # # for line in ser.readline():
-    #    print(hexshow(line))
-    #    print(type(hexshow(line)))
-    # in_hex = ser.read()
-    # print(type(in_hex))
-    # time.sleep(0.5)
-
-
-#ser.write("0xAC0x300x000x2C0xAD")
-
-#ser.write("0xAC0x300x000x2C0xAD")
-    #print('send')
-#line=ser.readlines()
-#print(line)
-
-#ser.close()
 
 if __name__ == "__main__":
     sendpacket = Serial()
